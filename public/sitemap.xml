@@ -1,25 +1,28 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
-    <loc>https://yourdomain.com/</loc>
+    <loc>https://aztecatowingtx.com/</loc>
     <priority>1.0</priority>
   </url>
   <url>
-    <loc>https://yourdomain.com/services</loc>
+    <loc>https://aztecatowingtx.com/services</loc>
   </url>
   <url>
-    <loc>https://yourdomain.com/commercial</loc>
+    <loc>https://aztecatowingtx.com/commercial</loc>
   </url>
   <url>
-    <loc>https://yourdomain.com/gallery</loc>
+    <loc>https://aztecatowingtx.com/gallery</loc>
   </url>
   <url>
-    <loc>https://yourdomain.com/reviews</loc>
+    <loc>https://aztecatowingtx.com/reviews</loc>
   </url>
   <url>
-    <loc>https://yourdomain.com/contact</loc>
+    <loc>https://aztecatowingtx.com/contact</loc>
   </url>
   <url>
-    <loc>https://yourdomain.com/about</loc>
+    <loc>https://aztecatowingtx.com/about</loc>
+  </url>
+  <url>
+    <loc>https://aztecatowingtx.com/thank-you</loc>
   </url>
 </urlset>
