@@ -1,6 +1,7 @@
 import React from "react";
 import Navbar from "../components/Navbar";
 import { useLanguage } from "../context/LanguageContext";
+import { Helmet } from "react-helmet"; // ✅ SEO Import
 
 export default function Reviews() {
   const { language } = useLanguage();
@@ -64,6 +65,18 @@ export default function Reviews() {
 
   return (
     <>
+      {/* ✅ SEO META TAGS */}
+      <Helmet>
+        <title>What Customers Say | Azteca Towing Reviews</title>
+        <meta name="description" content="Read real reviews from happy customers in Austin. Azteca Towing provides fast, reliable 24/7 service and honest pricing." />
+        <meta name="keywords" content="Azteca Towing reviews, best towing company Austin, customer feedback towing, 5-star tow truck reviews" />
+        <meta property="og:title" content="What Customers Say | Azteca Towing Reviews" />
+        <meta property="og:description" content="Real testimonials from customers who trust Azteca Towing in Austin, TX. See why we’re rated 5 stars." />
+        <meta property="og:image" content="https://aztecatowing.com/assets/og-reviews.jpg" />
+        <meta property="og:url" content="https://aztecatowing.com/reviews" />
+        <meta name="twitter:card" content="summary_large_image" />
+      </Helmet>
+
       <Navbar />
 
       {/* Hero */}

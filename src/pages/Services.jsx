@@ -1,6 +1,7 @@
 import React from "react";
 import Navbar from "../components/Navbar";
 import { useLanguage } from "../context/LanguageContext";
+import { Helmet } from "react-helmet"; // ✅ SEO IMPORT
 
 export default function Services() {
   const { language } = useLanguage();
@@ -25,6 +26,18 @@ export default function Services() {
 
   return (
     <>
+      {/* ✅ SEO META TAGS */}
+      <Helmet>
+        <title>Towing & Roadside Services | Azteca Towing Austin</title>
+        <meta name="description" content="From flat tires to junk car removal — we offer fast, affordable towing and roadside help 24/7 in Austin and nearby cities." />
+        <meta name="keywords" content="emergency towing, flatbed towing Austin, roadside assistance Austin, junk car removal, equipment towing" />
+        <meta property="og:title" content="Towing & Roadside Services | Azteca Towing Austin" />
+        <meta property="og:description" content="24/7 emergency towing, roadside assistance, flatbed transport, junk removal and more. Serving Austin and nearby areas." />
+        <meta property="og:image" content="https://aztecatowing.com/assets/og-services.jpg" />
+        <meta property="og:url" content="https://aztecatowing.com/services" />
+        <meta name="twitter:card" content="summary_large_image" />
+      </Helmet>
+
       <Navbar />
 
       {/* Hero Section */}

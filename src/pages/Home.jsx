@@ -4,6 +4,7 @@ import { motion } from "framer-motion";
 import Slider from "react-slick";
 import Navbar from "../components/Navbar";
 import { useLanguage } from "../context/LanguageContext";
+import { Helmet } from "react-helmet"; // ✅ NEW LINE
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 
@@ -81,6 +82,18 @@ export default function Home() {
 
   return (
     <>
+      {/* ✅ SEO META TAGS */}
+      <Helmet>
+        <title>Azteca Towing | 24/7 Tow Truck Service in Austin, TX</title>
+        <meta name="description" content="Fast, reliable towing and roadside help across Austin. 24/7 service, bilingual team, family-owned." />
+        <meta name="keywords" content="towing Austin TX, emergency towing, roadside assistance, Azteca Towing" />
+        <meta property="og:title" content="Azteca Towing | 24/7 Tow Truck Service in Austin, TX" />
+        <meta property="og:description" content="24/7 emergency roadside assistance and towing across Austin. Fast, reliable, and family-owned." />
+        <meta property="og:image" content="https://aztecatowing.com/assets/og-home.jpg" />
+        <meta property="og:url" content="https://aztecatowing.com" />
+        <meta name="twitter:card" content="summary_large_image" />
+      </Helmet>
+
       <Navbar />
 
       {/* Hero Section */}

@@ -1,6 +1,7 @@
 import React from "react";
 import Navbar from "../components/Navbar";
 import { Link } from "react-router-dom";
+import { Helmet } from "react-helmet";
 import { useLanguage } from "../context/LanguageContext"; // 🌐 Language support
 
 export default function ThankYou() {
@@ -8,6 +9,19 @@ export default function ThankYou() {
 
   return (
     <>
+      <Helmet>
+        <title>{language === "en" ? "Thank You | Azteca Towing" : "Gracias | Azteca Towing"}</title>
+        <meta
+          name="description"
+          content={
+            language === "en"
+              ? "Your request has been received. A team member will reach out as soon as possible."
+              : "Hemos recibido tu solicitud. Un miembro del equipo se pondrá en contacto contigo lo antes posible."
+          }
+        />
+        <meta name="robots" content="noindex, follow" />
+      </Helmet>
+
       <Navbar />
       <section className="bg-white text-black py-20 px-6 text-center">
         <div className="max-w-2xl mx-auto">

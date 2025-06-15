@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import Navbar from "../components/Navbar";
 import { useLanguage } from "../context/LanguageContext";
+import { Helmet } from "react-helmet"; // ✅ SEO Import
 
 export default function CommercialTowing() {
   const { language } = useLanguage();
@@ -31,6 +32,18 @@ export default function CommercialTowing() {
 
   return (
     <>
+      {/* ✅ SEO META TAGS */}
+      <Helmet>
+        <title>Commercial Towing for HOAs, Apartments & Dealerships | Azteca Towing</title>
+        <meta name="description" content="Partner with a reliable commercial towing provider in Austin. We work with HOAs, apartments, dealerships, and construction companies." />
+        <meta name="keywords" content="commercial towing Austin, apartment towing, HOA towing, dealership repossessions, equipment relocation" />
+        <meta property="og:title" content="Commercial Towing for HOAs, Apartments & Dealerships | Azteca Towing" />
+        <meta property="og:description" content="Reliable towing for commercial partners in Austin — HOAs, apartments, construction, and dealerships welcome." />
+        <meta property="og:image" content="https://aztecatowing.com/assets/og-commercial.jpg" />
+        <meta property="og:url" content="https://aztecatowing.com/commercial" />
+        <meta name="twitter:card" content="summary_large_image" />
+      </Helmet>
+
       <Navbar />
 
       {/* Hero */}

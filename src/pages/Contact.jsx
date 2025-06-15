@@ -3,6 +3,7 @@ import Navbar from "../components/Navbar";
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
 import { useLanguage } from "../context/LanguageContext";
+import { Helmet } from "react-helmet"; // ✅ SEO Import
 
 export default function Contact() {
   const [status, setStatus] = useState(null);
@@ -33,6 +34,18 @@ export default function Contact() {
 
   return (
     <>
+      {/* ✅ SEO META TAGS */}
+      <Helmet>
+        <title>Contact Azteca Towing | 24/7 Towing in Austin, TX</title>
+        <meta name="description" content="Call or message Azteca Towing in Austin, TX. Available 24/7 for emergency towing, roadside help, or general questions." />
+        <meta name="keywords" content="contact towing Austin, Azteca Towing phone number, towing help, emergency tow Austin" />
+        <meta property="og:title" content="Contact Azteca Towing | 24/7 Towing in Austin, TX" />
+        <meta property="og:description" content="Reach out to Azteca Towing anytime. 24/7 phone line and fast response for all towing needs." />
+        <meta property="og:image" content="https://aztecatowing.com/assets/og-contact.jpg" />
+        <meta property="og:url" content="https://aztecatowing.com/contact" />
+        <meta name="twitter:card" content="summary_large_image" />
+      </Helmet>
+
       <Navbar />
 
       {/* Hero */}

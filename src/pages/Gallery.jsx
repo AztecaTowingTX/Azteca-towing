@@ -1,6 +1,7 @@
 import React from "react";
 import Navbar from "../components/Navbar";
 import { useLanguage } from "../context/LanguageContext";
+import { Helmet } from "react-helmet";
 
 const galleryItems = [
   { key: "boxtruck1", captionEn: "", captionEs: "" },
@@ -19,6 +20,18 @@ export default function Gallery() {
 
   return (
     <>
+      <Helmet>
+        <title>Gallery | Azteca Towing Austin</title>
+        <meta
+          name="description"
+          content="Browse Azteca Towing's gallery of real towing jobs across Austin — including trucks, equipment, accidents, and roadside assistance."
+        />
+        <meta
+          name="keywords"
+          content="Azteca Towing gallery, towing images Austin, truck towing Austin, equipment towing, roadside recovery photos"
+        />
+      </Helmet>
+
       <Navbar />
       <section className="bg-white text-black py-16 px-4 md:px-8">
         <div className="max-w-6xl mx-auto">

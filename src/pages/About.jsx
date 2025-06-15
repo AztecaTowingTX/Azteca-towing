@@ -1,12 +1,25 @@
 import React from "react";
 import Navbar from "../components/Navbar";
 import { useLanguage } from "../context/LanguageContext";
+import { Helmet } from "react-helmet";
 
 export default function About() {
   const { language } = useLanguage();
 
   return (
     <>
+      <Helmet>
+        <title>About Us | Azteca Towing Austin</title>
+        <meta
+          name="description"
+          content="Learn about Azteca Towing — a family-owned towing company proudly serving Austin with 15+ years of trusted service, bilingual support, and 24/7 roadside help."
+        />
+        <meta
+          name="keywords"
+          content="Azteca Towing, About Azteca, Austin towing company, family-owned towing, roadside help Austin"
+        />
+      </Helmet>
+
       <Navbar />
       <section className="bg-white text-black py-16 px-6">
         <div className="max-w-5xl mx-auto">
