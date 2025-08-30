@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import Navbar from "../components/Navbar";
 import { useLanguage } from "../context/LanguageContext";
-import { Helmet } from "react-helmet"; // ✅ SEO Import
+import { Helmet } from "react-helmet-async"; // ✅ SEO Import
 
 export default function CommercialTowing() {
   const { language } = useLanguage();
@@ -12,7 +12,7 @@ export default function CommercialTowing() {
     const form = new FormData(e.target);
     form.append("formType", "commercial");
 
-    const res = await fetch("https://hooks.zapier.com/hooks/catch/22385391/20yijmf/", {
+    const res = await fetch("https://hooks.zapier.com/hooks/catch/22385391/201bgve/", {
       method: "POST",
       headers: { Accept: "application/json" },
       body: form,
@@ -32,16 +32,53 @@ export default function CommercialTowing() {
 
   return (
     <>
-      {/* ✅ SEO META TAGS */}
+      {/* ✅ SEO META TAGS + SCHEMA */}
       <Helmet>
         <title>Commercial Towing for HOAs, Apartments & Dealerships | Azteca Towing</title>
-        <meta name="description" content="Partner with a reliable commercial towing provider in Austin. We work with HOAs, apartments, dealerships, and construction companies." />
-        <meta name="keywords" content="commercial towing Austin, apartment towing, HOA towing, dealership repossessions, equipment relocation" />
-        <meta property="og:title" content="Commercial Towing for HOAs, Apartments & Dealerships | Azteca Towing" />
-        <meta property="og:description" content="Reliable towing for commercial partners in Austin — HOAs, apartments, construction, and dealerships welcome." />
-        <meta property="og:image" content="https://aztecatowing.com/assets/og-commercial.jpg" />
-        <meta property="og:url" content="https://aztecatowing.com/commercial" />
+        <meta
+          name="description"
+          content="Partner with a reliable commercial towing provider in Austin. We work with HOAs, apartments, dealerships, and construction companies."
+        />
+        <meta
+          name="keywords"
+          content="commercial towing Austin, apartment towing, HOA towing, dealership repossessions, equipment relocation"
+        />
+        <meta
+          property="og:title"
+          content="Commercial Towing for HOAs, Apartments & Dealerships | Azteca Towing"
+        />
+        <meta
+          property="og:description"
+          content="Reliable towing for commercial partners in Austin — HOAs, apartments, construction, and dealerships welcome."
+        />
+        <meta property="og:image" content="https://aztecatowingtx.com/images/aztec-logo.png" />
+        <meta property="og:url" content="https://aztecatowingtx.com/commercial" />
         <meta name="twitter:card" content="summary_large_image" />
+        <script type="application/ld+json">
+          {JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "LocalBusiness",
+            name: "Azteca Towing",
+            image: "https://aztecatowingtx.com/images/aztec-logo.png",
+            "@id": "https://aztecatowingtx.com",
+            url: "https://aztecatowingtx.com",
+            telephone: "512-945-2314",
+            address: {
+              "@type": "PostalAddress",
+              addressLocality: "Austin",
+              addressRegion: "TX",
+              postalCode: "78753",
+              addressCountry: "US",
+            },
+            openingHours: "Mo-Su 00:00-23:59",
+            sameAs: [
+              "https://www.tiktok.com/@santiagosanchezne",
+              "https://www.instagram.com/aztecatowingatx",
+              "https://yelp.to/JWYXfQ89fN",
+              "https://www.google.com/search?q=azteca+towing+reviews",
+            ],
+          })}
+        </script>
       </Helmet>
 
       <Navbar />

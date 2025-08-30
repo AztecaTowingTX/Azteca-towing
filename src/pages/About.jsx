@@ -1,13 +1,14 @@
 import React from "react";
 import Navbar from "../components/Navbar";
 import { useLanguage } from "../context/LanguageContext";
-import { Helmet } from "react-helmet";
+import { Helmet } from "react-helmet-async";
 
 export default function About() {
   const { language } = useLanguage();
 
   return (
     <>
+      {/* ✅ SEO + LOCAL SCHEMA */}
       <Helmet>
         <title>About Us | Azteca Towing Austin</title>
         <meta
@@ -18,6 +19,34 @@ export default function About() {
           name="keywords"
           content="Azteca Towing, About Azteca, Austin towing company, family-owned towing, roadside help Austin"
         />
+        <meta property="og:title" content="About Us | Azteca Towing Austin" />
+        <meta property="og:description" content="Family-owned and bilingual towing service in Austin, TX. 15+ years of reliable, honest help and fast 24/7 roadside response." />
+        <meta property="og:image" content="https://aztecatowing.com/assets/og-about.jpg" />
+        <meta property="og:url" content="https://aztecatowing.com/about" />
+        <meta name="twitter:card" content="summary_large_image" />
+        <script type="application/ld+json">
+          {JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "LocalBusiness",
+            name: "Azteca Towing",
+            image: "https://aztecatowing.com/assets/og-about.jpg",
+            "@id": "https://aztecatowing.com",
+            url: "https://aztecatowing.com",
+            telephone: "+15129452314",
+            address: {
+              "@type": "PostalAddress",
+              addressLocality: "Austin",
+              addressRegion: "TX",
+              postalCode: "78753",
+              addressCountry: "US",
+            },
+            sameAs: [
+              "https://www.yelp.com/biz/azteca-towing-austin-3",
+              "https://www.instagram.com/aztecatowingatx",
+              "https://www.tiktok.com/@santiagosanchezne",
+            ],
+          })}
+        </script>
       </Helmet>
 
       <Navbar />

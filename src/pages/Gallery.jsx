@@ -1,7 +1,7 @@
 import React from "react";
 import Navbar from "../components/Navbar";
 import { useLanguage } from "../context/LanguageContext";
-import { Helmet } from "react-helmet";
+import { Helmet } from "react-helmet-async";
 
 const galleryItems = [
   { key: "boxtruck1", captionEn: "", captionEs: "" },

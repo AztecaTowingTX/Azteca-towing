@@ -1,268 +1,440 @@
-import React, { useState } from "react";
-import { PhoneCall } from "lucide-react";
+// src/pages/Home.jsx
+import React, { useEffect, useState } from "react";
+import { PhoneCall, X } from "lucide-react";
 import { motion } from "framer-motion";
 import Slider from "react-slick";
 import Navbar from "../components/Navbar";
 import { useLanguage } from "../context/LanguageContext";
-import { Helmet } from "react-helmet"; // ✅ NEW LINE
+import { Helmet } from "react-helmet-async";
+
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 
+// === CONFIG ===
+const POPUP_KEY = "atx_seen_popup_v2";
+const ZAP_URL = "https://hooks.zapier.com/hooks/catch/22385391/201bgve/";
+// If image is at /public/images/hero-bg.jpeg keep this path:
+const HERO_IMG = "/images/hero-bg.jpeg";
+// If your file is actually /public/hero-bg.jpeg, use: const HERO_IMG = "/hero-bg.jpeg";
+
 export default function Home() {
-  const [status, setStatus] = useState(null);
   const { language } = useLanguage();
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    const form = new FormData(e.target);
-    form.append("formType", "regular");
+  // ================= Popup =================
+  const [showPopup, setShowPopup] = useState(false);
+  const [sendStatus, setSendStatus] = useState(null);
 
-    const res = await fetch("https://hooks.zapier.com/hooks/catch/22385391/201bgve/", {
+  useEffect(() => {
+    const last = localStorage.getItem(POPUP_KEY);
+    const DAY = 24 * 60 * 60 * 1000;
+    if (!last || Date.now() - parseInt(last, 10) > DAY) {
+      const t = setTimeout(() => setShowPopup(true), 900);
+      return () => clearTimeout(t);
+    }
+  }, []);
+
+  // Helper: POST to Zapier with urlencoded body (Zap parses this very reliably)
+  const postToZapier = async (fields) => {
+    const params = new URLSearchParams();
+    Object.entries(fields).forEach(([k, v]) => params.append(k, v ?? ""));
+    const res = await fetch(ZAP_URL, {
       method: "POST",
-      body: form,
+      headers: { "Content-Type": "application/x-www-form-urlencoded;charset=UTF-8" },
+      body: params.toString(),
     });
+    return res.ok;
+  };
 
-    if (res.ok) {
-      window.location.href = "/thank-you";
-      e.target.reset();
-    } else {
-      setStatus(
-        language === "en"
-          ? "Something went wrong. Please try again."
-          : "Algo salió mal. Inténtalo de nuevo."
-      );
+  const handlePopupSubmit = async (e) => {
+    e.preventDefault();
+    setSendStatus(null);
+
+    const form = e.currentTarget;
+    const fields = {
+      name: form.name.value.trim(),
+      phone: form.phone.value.trim(),
+      location: form.location?.value?.trim() || "",
+      message: form.message.value.trim(),
+      formType: "popup",
+      sourcePage: "Home",
+    };
+
+    try {
+      const ok = await postToZapier(fields);
+      if (!ok) throw new Error("Bad response");
+      setSendStatus("ok");
+      localStorage.setItem(POPUP_KEY, String(Date.now()));
+      form.reset();
+      setTimeout(() => setShowPopup(false), 900);
+    } catch {
+      setSendStatus("err");
     }
   };
 
+  // ================= Reviews =================
   const reviews = [
     {
       name: "Carlos M.",
       stars: 5,
       text:
         language === "en"
-          ? "Super fast and friendly service. Called them at 1 AM and they were there in 15 minutes!"
-          : "Servicio súper rápido y amable. ¡Los llamé a la 1 AM y llegaron en 15 minutos!",
+          ? "Super fast and friendly. Called at 1 AM and they arrived in 15 minutes!"
+          : "Súper rápidos y amables. ¡Llamé a la 1 AM y llegaron en 15 minutos!",
     },
     {
       name: "Jessica T.",
-      stars: 4,
+      stars: 5,
       text:
         language === "en"
-          ? "Very professional. They helped me get my car out of a tricky situation with no damage."
-          : "Muy profesionales. Me ayudaron a sacar mi auto sin daños.",
+          ? "Professional and careful with my car. 10/10."
+          : "Profesionales y cuidadosos con mi auto. 10/10.",
     },
     {
       name: "Mike R.",
       stars: 5,
       text:
         language === "en"
-          ? "Excellent customer service. Affordable rates and quick response."
-          : "Excelente servicio. Tarifas justas y respuesta rápida.",
+          ? "Affordable rates and quick response. Lifesaver."
+          : "Precios justos y respuesta rápida. Me salvaron.",
     },
     {
       name: "Ashley D.",
       stars: 5,
       text:
         language === "en"
-          ? "Azteca Towing was a lifesaver when I broke down on the highway. Highly recommend!"
-          : "Azteca Towing me salvó cuando me quedé en la carretera. ¡Muy recomendados!",
+          ? "Broke down on 35. Dispatcher was calm, driver was fast."
+          : "Me quedé en la 35. La despachadora muy amable y el chofer rapidísimo.",
+    },
+    {
+      name: "Luis G.",
+      stars: 4,
+      text:
+        language === "en"
+          ? "Towed my truck to the shop after hours. Smooth process."
+          : "Remolcaron mi troca al taller de noche. Todo fácil.",
+    },
+    {
+      name: "Erika S.",
+      stars: 5,
+      text:
+        language === "en"
+          ? "They unlocked my car in minutes. Highly recommend."
+          : "Abrieron mi carro en minutos. Muy recomendados.",
     },
   ];
 
   const sliderSettings = {
     dots: true,
-    infinite: true,
-    autoplay: true,
-    speed: 600,
-    autoplaySpeed: 5000,
     arrows: false,
+    autoplay: true,
+    autoplaySpeed: 4500,
+    speed: 550,
+    infinite: true,
     slidesToShow: 1,
     slidesToScroll: 1,
   };
 
+  // ================= Hero CTA =================
+  const callNowText = language === "en" ? "Call Now" : "Llamar Ahora";
+  const phone = "(512) 945-2314";
+
   return (
     <>
-      {/* ✅ SEO META TAGS */}
       <Helmet>
         <title>Azteca Towing | 24/7 Tow Truck Service in Austin, TX</title>
-        <meta name="description" content="Fast, reliable towing and roadside help across Austin. 24/7 service, bilingual team, family-owned." />
-        <meta name="keywords" content="towing Austin TX, emergency towing, roadside assistance, Azteca Towing" />
-        <meta property="og:title" content="Azteca Towing | 24/7 Tow Truck Service in Austin, TX" />
-        <meta property="og:description" content="24/7 emergency roadside assistance and towing across Austin. Fast, reliable, and family-owned." />
-        <meta property="og:image" content="https://aztecatowing.com/assets/og-home.jpg" />
-        <meta property="og:url" content="https://aztecatowing.com" />
-        <meta name="twitter:card" content="summary_large_image" />
+        <meta
+          name="description"
+          content="Fast, reliable towing and roadside help across Austin. 24/7 service, bilingual team, family-owned."
+        />
       </Helmet>
 
       <Navbar />
 
-      {/* Hero Section */}
-      <section
-        className="relative text-white bg-cover bg-center"
-        style={{ backgroundImage: "url('/images/hero-bg.jpeg')" }}
+      {/* Hero */}
+      <header
+        className="relative bg-no-repeat bg-cover min-h-[64vh] md:min-h-[76vh]"
+        style={{
+          // push the image UP a bit so trucks show more (keep Azteca arch visible)
+          backgroundImage: `linear-gradient(rgba(0,0,0,.28), rgba(0,0,0,.28)), url(${HERO_IMG})`,
+          backgroundPosition: "50% 18%", // <- move up (lower number = higher crop)
+        }}
       >
-        <div className="bg-black/60 w-full h-full absolute top-0 left-0 z-0" />
-        <div className="relative z-10 flex flex-col items-center justify-center text-center px-4 py-[160px] sm:py-[220px] md:py-[280px]">
+        <div className="mx-auto max-w-6xl px-4 py-20 md:py-28 text-center text-white">
           <motion.h1
-            initial={{ opacity: 0, y: -20 }}
+            initial={{ opacity: 0, y: 14 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8 }}
-            className="text-4xl sm:text-5xl font-extrabold mb-4 max-w-4xl mx-auto leading-tight drop-shadow-lg"
+            transition={{ duration: 0.5 }}
+            className="text-3xl md:text-5xl font-extrabold tracking-tight drop-shadow"
+            style={{
+              textShadow: "0 1px 1px rgba(0,0,0,.75), 0 10px 24px rgba(0,0,0,.45)",
+            }}
           >
             {language === "en"
-              ? "Austin's Trusted Tow Truck Service — Fast & Reliable"
-              : "Servicio de grúas confiable en Austin — Rápido y seguro"}
+              ? "Austin's Trusted Towing Service"
+              : "Servicio de Grúas de Confianza en Austin"}
           </motion.h1>
-          <p className="text-lg text-white max-w-2xl mx-auto mb-6 drop-shadow">
-            {language === "en"
-              ? "Azteca Towing offers 24/7 emergency roadside help across Austin. Flat tire? Locked out? We’re here — fast."
-              : "Azteca Towing ofrece asistencia vial de emergencia 24/7 en Austin. ¿Llanta ponchada? ¿Te quedaste fuera? Estamos aquí — rápido."}
-          </p>
-          <a
-            href="tel:5129452314"
-            className="inline-flex items-center gap-2 bg-yellow-500 text-black px-6 py-3 rounded-xl font-semibold hover:bg-yellow-400 transition"
+
+          <p
+            className="mt-3 md:mt-4 text-sm md:text-base opacity-95"
+            style={{ textShadow: "0 1px 1px rgba(0,0,0,.55)" }}
           >
-            <PhoneCall className="w-5 h-5" />
-            {language === "en" ? "Call Now: (512) 945-2314" : "Llámanos: (512) 945-2314"}
+            {language === "en"
+              ? "Fast, affordable 24/7 towing & roadside help."
+              : "Asistencia y remolque 24/7 — rápido y accesible."}
+          </p>
+
+          <a
+            href="tel:+15129452314"
+            className="inline-flex items-center gap-2 mt-6 bg-yellow-400 text-black font-semibold px-4 py-2 md:px-6 md:py-3 rounded-full shadow hover:bg-yellow-300"
+          >
+            <PhoneCall size={18} />
+            {callNowText}: {phone}
           </a>
         </div>
-      </section>
 
-      {/* Review Slider */}
-      <section className="bg-gray-50 py-16 px-4 text-center">
-        <h2 className="text-3xl font-bold mb-10">
-          {language === "en" ? "What Our Customers Say" : "Lo Que Dicen Nuestros Clientes"}
-        </h2>
-        <div className="max-w-3xl mx-auto">
+        {/* soft fade at bottom for readability */}
+        <div className="pointer-events-none absolute inset-x-0 bottom-0 h-24 bg-gradient-to-b from-transparent to-white/70" />
+      </header>
+
+      {/* Reviews (above map) */}
+      <section className="bg-gray-50 py-12">
+        <div className="mx-auto max-w-5xl px-4">
+          <h3 className="text-2xl font-bold text-center mb-6">
+            {language === "en" ? "What Our Customers Say" : "Lo Que Dicen Nuestros Clientes"}
+          </h3>
           <Slider {...sliderSettings}>
-            {reviews.map((review, i) => (
-              <div key={i} className="bg-white p-8 rounded-xl shadow text-left">
-                <p className="text-yellow-500 text-xl mb-2">
-                  {"★".repeat(review.stars)}{"☆".repeat(5 - review.stars)}
-                </p>
-                <p className="italic text-gray-800 mb-4">"{review.text}"</p>
-                <p className="text-sm font-semibold text-gray-600">- {review.name}</p>
+            {reviews.map((r, i) => (
+              <div key={i} className="px-2">
+                <div className="bg-white rounded-2xl shadow p-6 md:p-8">
+                  <div className="flex items-center gap-2 text-yellow-500 text-lg">
+                    {"★".repeat(r.stars)}{" "}
+                    <span className="text-gray-600 text-sm">— {r.name}</span>
+                  </div>
+                  <p className="mt-3 text-gray-700 italic leading-relaxed">“{r.text}”</p>
+                </div>
               </div>
             ))}
           </Slider>
         </div>
       </section>
 
-      {/* Why Choose Us */}
-      <section className="bg-yellow-50 py-16 px-4">
-        <div className="max-w-5xl mx-auto text-center space-y-10">
-          <h2 className="text-3xl font-bold">
-            {language === "en" ? "Why Choose Azteca Towing?" : "¿Por Qué Elegir Azteca Towing?"}
-          </h2>
-          <div className="grid md:grid-cols-3 gap-6 text-left">
-            {[
-              { emoji: "⚡", en: "Fast 24/7 Dispatch", es: "Despacho Rápido 24/7" },
-              { emoji: "🔒", en: "Licensed & Insured", es: "Licenciados y Asegurados" },
-              { emoji: "💬", en: "Bilingual Crew", es: "Equipo Bilingüe" },
-            ].map((item, i) => (
-              <div key={i} className="bg-white p-6 rounded-xl shadow text-center">
-                <div className="text-3xl">{item.emoji}</div>
-                <h3 className="font-semibold text-lg mt-2">
-                  {language === "en" ? item.en : item.es}
-                </h3>
-              </div>
-            ))}
-          </div>
-          <div className="flex flex-wrap justify-center items-center gap-4 text-sm text-gray-700 mt-6">
-            <div className="flex items-center gap-2">✅ {language === "en" ? "Licensed & Insured" : "Licenciados y Asegurados"}</div>
-            <div className="flex items-center gap-2">🔧 {language === "en" ? "Family-Owned & Operated" : "Negocio Familiar"}</div>
-            <div className="flex items-center gap-2">🕒 {language === "en" ? "Fast 24/7 Response" : "Respuesta Rápida 24/7"}</div>
-          </div>
-        </div>
-      </section>
-
-      {/* Service Area Map */}
-      <section className="bg-gray-100 py-20 px-4 text-center">
-        <div className="max-w-6xl mx-auto">
-          <h2 className="text-3xl font-bold mb-4">
-            {language === "en"
-              ? "Proudly Serving Austin & Surrounding Areas"
-              : "Orgullosamente Sirviendo Austin y Áreas Cercanas"}
-          </h2>
-          <p className="text-gray-700 mb-8 max-w-2xl mx-auto">
-            {language === "en"
-              ? "We serve Round Rock, Pflugerville, Cedar Park, Buda, Kyle, Leander, Georgetown & more."
-              : "Servimos Round Rock, Pflugerville, Cedar Park, Buda, Kyle, Leander, Georgetown y más."}
-          </p>
-          <div className="rounded-2xl overflow-hidden shadow-lg border border-gray-200">
-            <iframe
-              title="Service Area Map"
-              src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d110752.33558233216!2d-97.82215419396729!3d30.307678556741088!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x8644b59ed5d83f0d%3A0x5b8ad905db3d2242!2sAustin%2C%20TX!5e0!3m2!1sen!2sus!4v1682722723689!5m2!1sen!2sus"
-              width="100%"
-              height="450"
-              style={{ border: 0 }}
-              allowFullScreen=""
-              loading="lazy"
-              referrerPolicy="no-referrer-when-downgrade"
-            ></iframe>
-          </div>
-        </div>
-      </section>
-
-      {/* Contact Form */}
-      <section className="bg-white py-20 px-4 text-center">
-        <h2 className="text-3xl font-bold mb-2">
-          {language === "en" ? "Request a Tow" : "Solicita una Grúa"}
-        </h2>
-        <p className="text-gray-600 mb-6">
+      {/* Service Area + Map */}
+      <section className="mx-auto max-w-6xl px-4 py-12">
+        <h2 className="text-2xl md:text-3xl font-bold text-center">
           {language === "en"
-            ? "Need service? Fill out the form and we’ll get back fast."
-            : "¿Necesitas servicio? Llena el formulario y te contactaremos rápido."}
+            ? "Proudly Serving Austin & Surrounding Areas"
+            : "Sirviendo Austin y Alrededores"}
+        </h2>
+        <p className="mt-2 text-center text-gray-600">
+          {language === "en"
+            ? "From downtown Austin to surrounding communities, we provide reliable towing wherever you need it."
+            : "Desde el centro de Austin hasta las ciudades cercanas — llegamos donde nos necesites."}
         </p>
 
-        <form
-          onSubmit={handleSubmit}
-          className="max-w-xl mx-auto flex flex-col gap-4 text-left"
-        >
-          <input type="hidden" name="formType" value="regular" />
-          <input
-            type="text"
-            name="name"
-            placeholder={language === "en" ? "Your Name" : "Tu Nombre"}
-            required
-            className="p-3 rounded-xl border border-gray-300"
+        <div className="mt-6 overflow-hidden rounded-2xl shadow">
+          <iframe
+            title="Austin Service Area"
+            src="https://www.google.com/maps?q=Austin,+TX&output=embed"
+            width="100%"
+            height="420"
+            style={{ border: 0 }}
+            loading="lazy"
           />
-          <input
-            type="text"
-            name="location"
-            placeholder={language === "en" ? "Location or Address" : "Ubicación o Dirección"}
-            className="p-3 rounded-xl border border-gray-300"
-          />
-          <input
-            type="tel"
-            name="phone"
-            placeholder={language === "en" ? "Phone Number" : "Número de Teléfono"}
-            required
-            className="p-3 rounded-xl border border-gray-300"
-          />
-          <textarea
-            name="message"
-            placeholder={language === "en" ? "How can we help?" : "¿Cómo podemos ayudarte?"}
-            required
-            className="p-3 rounded-xl border border-gray-300"
-          ></textarea>
-          <button
-            type="submit"
-            className="bg-yellow-500 text-black px-6 py-3 rounded-xl font-semibold hover:bg-yellow-400 transition"
-          >
-            {language === "en" ? "Send Request" : "Enviar Solicitud"}
-          </button>
-          {status && <p className="text-center mt-4 text-green-600">{status}</p>}
-        </form>
+        </div>
       </section>
 
-      {/* Floating Call Now Button */}
+      {/* Quick Request Form */}
+      <section className="mx-auto max-w-3xl px-4 py-12" id="request">
+        <h3 className="text-2xl font-bold text-center">
+          {language === "en" ? "Request a Tow" : "Solicitar una Grúa"}
+        </h3>
+        <p className="text-center text-gray-600 mt-2">
+          {language === "en"
+            ? "Need service? Fill out the form and we’ll get back fast."
+            : "¿Necesitas servicio? Llena el formulario y te respondemos rápido."}
+        </p>
+        <Form postToZapier={postToZapier} />
+      </section>
+
+      {/* Sticky Call Button */}
       <a
-        href="tel:5129452314"
-        className="fixed bottom-6 right-6 z-50 bg-yellow-500 text-black px-5 py-3 rounded-full shadow-lg hover:bg-yellow-400 transition"
+        href="tel:+15129452314"
+        className="fixed right-4 bottom-4 z-30 bg-yellow-400 text-black px-4 py-3 rounded-full shadow-lg font-semibold flex items-center gap-2 hover:bg-yellow-300"
       >
-        📞 {language === "en" ? "Call Now" : "Llámanos"}
+        <PhoneCall size={18} />
+        {callNowText}
       </a>
+
+      {/* ===== Popup ===== */}
+      {showPopup && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4">
+          <div className="w-full max-w-md rounded-2xl bg-white shadow-2xl">
+            <div className="flex items-center justify-between p-4 border-b">
+              <h4 className="font-semibold">
+                {language === "en"
+                  ? "Need a Tow? Quick Request"
+                  : "¿Necesitas Grúa? Solicitud Rápida"}
+              </h4>
+              <button
+                onClick={() => {
+                  localStorage.setItem(POPUP_KEY, String(Date.now()));
+                  setShowPopup(false);
+                }}
+                className="p-1 rounded hover:bg-gray-100"
+                aria-label="Close"
+              >
+                <X size={18} />
+              </button>
+            </div>
+
+            <form onSubmit={handlePopupSubmit} className="p-4 space-y-3">
+              <input
+                name="name"
+                required
+                placeholder={language === "en" ? "Your name" : "Tu nombre"}
+                className="w-full rounded-lg border px-3 py-2"
+              />
+              <input
+                name="location"
+                placeholder={
+                  language === "en"
+                    ? "Where are you? (address or area)"
+                    : "¿Dónde estás? (dirección o zona)"
+                }
+                className="w-full rounded-lg border px-3 py-2"
+              />
+              <input
+                name="phone"
+                required
+                placeholder={
+                  language === "en"
+                    ? "Best callback number"
+                    : "Mejor número para llamar"
+                }
+                className="w-full rounded-lg border px-3 py-2"
+              />
+              <textarea
+                name="message"
+                rows="3"
+                placeholder={
+                  language === "en"
+                    ? "Vehicle + issue (e.g., flat on I-35, won’t start)"
+                    : "Vehículo + problema (ej. ponchado en I-35, no enciende)"
+                }
+                className="w-full rounded-lg border px-3 py-2"
+              />
+              <button
+                type="submit"
+                className="w-full rounded-lg bg-yellow-400 py-2 font-semibold hover:bg-yellow-300"
+              >
+                {language === "en" ? "Send" : "Enviar"}
+              </button>
+
+              {sendStatus === "ok" && (
+                <p className="text-green-600 text-sm">
+                  {language === "en"
+                    ? "Thanks! We’ll reach out shortly."
+                    : "¡Gracias! Te contactamos en breve."}
+                </p>
+              )}
+              {sendStatus === "err" && (
+                <p className="text-red-600 text-sm">
+                  {language === "en"
+                    ? "Something went wrong. Please call or try again."
+                    : "Algo salió mal. Llama o intenta de nuevo."}
+                </p>
+              )}
+            </form>
+          </div>
+        </div>
+      )}
     </>
+  );
+}
+
+// ===== Reusable form =====
+function Form({ postToZapier }) {
+  const { language } = useLanguage();
+  const [status, setStatus] = useState(null);
+
+  const onSubmit = async (e) => {
+    e.preventDefault();
+    setStatus(null);
+
+    const form = e.currentTarget;
+    const fields = {
+      name: form.name.value.trim(),
+      phone: form.phone.value.trim(),
+      location: form.location?.value?.trim() || "",
+      message: form.message.value.trim(),
+      formType: "regular",
+      sourcePage: "Home",
+    };
+
+    try {
+      const ok = await postToZapier(fields);
+      if (!ok) throw new Error("bad");
+      form.reset();
+      setStatus("ok");
+    } catch {
+      setStatus("err");
+    }
+  };
+
+  return (
+    <form onSubmit={onSubmit} className="mt-6 space-y-3">
+      <input
+        name="name"
+        required
+        placeholder={language === "en" ? "Your name" : "Tu nombre"}
+        className="w-full rounded-xl border px-4 py-3"
+      />
+      <input
+        name="location"
+        placeholder={
+          language === "en" ? "Location or address" : "Ubicación o dirección"
+        }
+        className="w-full rounded-xl border px-4 py-3"
+      />
+      <input
+        name="phone"
+        required
+        placeholder={
+          language === "en" ? "Best callback number" : "Mejor número para llamar"
+        }
+        className="w-full rounded-xl border px-4 py-3"
+      />
+      <textarea
+        name="message"
+        rows="3"
+        placeholder={
+          language === "en"
+            ? "Vehicle + issue (e.g., flat on I-35, won’t start)"
+            : "Vehículo + problema (ej. ponchado en I-35, no enciende)"
+        }
+        className="w-full rounded-xl border px-4 py-3"
+      />
+      <button
+        type="submit"
+        className="w-full rounded-xl bg-yellow-400 py-3 font-semibold hover:bg-yellow-300"
+      >
+        {language === "en" ? "Send Request" : "Enviar Solicitud"}
+      </button>
+
+      {status === "ok" && (
+        <p className="text-green-600 text-center">
+          {language === "en"
+            ? "Thanks! We’ll text/call shortly."
+            : "¡Gracias! Te contactamos en breve."}
+        </p>
+      )}
+      {status === "err" && (
+        <p className="text-red-600 text-center">
+          {language === "en"
+            ? "Something went wrong. Please call or try again."
+            : "Algo salió mal. Llama o intenta de nuevo."}
+        </p>
+      )}
+    </form>
   );
 }

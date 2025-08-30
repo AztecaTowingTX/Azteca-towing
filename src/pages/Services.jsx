@@ -1,7 +1,7 @@
 import React from "react";
 import Navbar from "../components/Navbar";
 import { useLanguage } from "../context/LanguageContext";
-import { Helmet } from "react-helmet"; // ✅ SEO IMPORT
+import { Helmet } from "react-helmet-async"; // ✅ SEO IMPORT
 
 export default function Services() {
   const { language } = useLanguage();
@@ -26,16 +26,41 @@ export default function Services() {
 
   return (
     <>
-      {/* ✅ SEO META TAGS */}
+      {/* ✅ SEO META TAGS + LOCAL BUSINESS SCHEMA */}
       <Helmet>
         <title>Towing & Roadside Services | Azteca Towing Austin</title>
         <meta name="description" content="From flat tires to junk car removal — we offer fast, affordable towing and roadside help 24/7 in Austin and nearby cities." />
         <meta name="keywords" content="emergency towing, flatbed towing Austin, roadside assistance Austin, junk car removal, equipment towing" />
         <meta property="og:title" content="Towing & Roadside Services | Azteca Towing Austin" />
         <meta property="og:description" content="24/7 emergency towing, roadside assistance, flatbed transport, junk removal and more. Serving Austin and nearby areas." />
-        <meta property="og:image" content="https://aztecatowing.com/assets/og-services.jpg" />
-        <meta property="og:url" content="https://aztecatowing.com/services" />
+        <meta property="og:image" content="https://aztecatowingtx.com/images/aztec-logo.png" />
+        <meta property="og:url" content="https://aztecatowingtx.com/services" />
         <meta name="twitter:card" content="summary_large_image" />
+        <script type="application/ld+json">
+          {JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "LocalBusiness",
+            name: "Azteca Towing",
+            image: "https://aztecatowingtx.com/images/aztec-logo.png",
+            "@id": "https://aztecatowingtx.com",
+            url: "https://aztecatowingtx.com/services",
+            telephone: "512-945-2314",
+            address: {
+              "@type": "PostalAddress",
+              addressLocality: "Austin",
+              addressRegion: "TX",
+              postalCode: "78753",
+              addressCountry: "US",
+            },
+            openingHours: "Mo-Su 00:00-23:59",
+            sameAs: [
+              "https://www.tiktok.com/@santiagosanchezne",
+              "https://www.instagram.com/aztecatowingatx",
+              "https://yelp.to/JWYXfQ89fN",
+              "https://www.google.com/search?q=azteca+towing+reviews",
+            ],
+          })}
+        </script>
       </Helmet>
 
       <Navbar />

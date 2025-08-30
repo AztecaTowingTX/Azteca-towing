@@ -1,7 +1,7 @@
 import React from "react";
 import Navbar from "../components/Navbar";
 import { useLanguage } from "../context/LanguageContext";
-import { Helmet } from "react-helmet"; // ✅ SEO Import
+import { Helmet } from "react-helmet-async"; // ✅ SEO Import
 
 export default function Reviews() {
   const { language } = useLanguage();
@@ -65,16 +65,62 @@ export default function Reviews() {
 
   return (
     <>
-      {/* ✅ SEO META TAGS */}
+      {/* ✅ SEO META TAGS + LOCAL BUSINESS SCHEMA */}
       <Helmet>
         <title>What Customers Say | Azteca Towing Reviews</title>
-        <meta name="description" content="Read real reviews from happy customers in Austin. Azteca Towing provides fast, reliable 24/7 service and honest pricing." />
-        <meta name="keywords" content="Azteca Towing reviews, best towing company Austin, customer feedback towing, 5-star tow truck reviews" />
-        <meta property="og:title" content="What Customers Say | Azteca Towing Reviews" />
-        <meta property="og:description" content="Real testimonials from customers who trust Azteca Towing in Austin, TX. See why we’re rated 5 stars." />
-        <meta property="og:image" content="https://aztecatowing.com/assets/og-reviews.jpg" />
+        <meta
+          name="description"
+          content="Read real reviews from happy customers in Austin. Azteca Towing provides fast, reliable 24/7 service and honest pricing."
+        />
+        <meta
+          name="keywords"
+          content="Azteca Towing reviews, best towing company Austin, customer feedback towing, 5-star tow truck reviews"
+        />
+        <meta
+          property="og:title"
+          content="What Customers Say | Azteca Towing Reviews"
+        />
+        <meta
+          property="og:description"
+          content="Real testimonials from customers who trust Azteca Towing in Austin, TX. See why we’re rated 5 stars."
+        />
+        <meta
+          property="og:image"
+          content="https://aztecatowing.com/assets/og-reviews.jpg"
+        />
         <meta property="og:url" content="https://aztecatowing.com/reviews" />
         <meta name="twitter:card" content="summary_large_image" />
+
+        {/* LocalBusiness Schema */}
+        <script type="application/ld+json">
+          {JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "LocalBusiness",
+            name: "Azteca Towing",
+            image: "https://aztecatowing.com/assets/og-reviews.jpg",
+            "@id": "https://aztecatowing.com",
+            url: "https://aztecatowing.com",
+            telephone: "+15129452314",
+            address: {
+              "@type": "PostalAddress",
+              streetAddress: "Austin, TX",
+              addressLocality: "Austin",
+              addressRegion: "TX",
+              postalCode: "78753",
+              addressCountry: "US",
+            },
+            sameAs: [
+              "https://www.yelp.com/biz/azteca-towing-austin-3",
+              "https://www.instagram.com/aztecatowingatx",
+              "https://www.tiktok.com/@santiagosanchezne",
+            ],
+            aggregateRating: {
+              "@type": "AggregateRating",
+              ratingValue: "5",
+              reviewCount: "50",
+            },
+          })}
+        </script>
       </Helmet>
 
       <Navbar />
